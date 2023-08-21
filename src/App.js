@@ -1,5 +1,7 @@
 import './App.css';
 import React, { Component } from 'react';
+import ExpenseForm from './components/ExpenseForm';
+import ExpenseList from './components/ExpenseList';
 
 export default class App extends Component {
     render() {
@@ -13,7 +15,7 @@ export default class App extends Component {
                         padding: '1rem',
                     }}
                 >
-                    Expense Form
+                    <ExpenseForm />
                 </div>
                 <div
                     style={{
@@ -22,7 +24,7 @@ export default class App extends Component {
                         padding: '1rem',
                     }}
                 >
-                    Expense List
+                    <ExpenseList />
                 </div>
                 <div
                     style={{
