@@ -14,6 +14,22 @@ const App = () => {
     const [charge, setCharge] = useState('');
     const [amount, setAmount] = useState(0);
     const [alert, setAlert] = useState({ show: false, type: '', text: '' });
+    const [edit, setEdit] = useState(false);
+    const [id, setId] = useState('');
+
+    const clearItems = () => {
+        setExpenses([]);
+    };
+
+    const handleEdit = (id) => {
+        const expense = expenses.find((item) => item.id === id);
+        console.log(expense);
+        const { charge, amount } = expense;
+        setCharge(charge);
+        setAmount(amount);
+        setEdit(true);
+        setId(id);
+    };
 
     const handleAlert = ({ type, text }) => {
         setAlert({ show: true, type, text });
@@ -26,17 +42,33 @@ const App = () => {
         e.preventDefault();
 
         if (charge !== '' && amount > 0) {
-            const newExpense = {
-                id: crypto.randomUUID(),
-                charge,
-                amount,
-            };
-            const newExpenses = [...expenses, newExpense];
+            if (edit) {
+                const newExpenses = expenses.map((item) => {
+                    return item.id === id ? { ...item, charge, amount } : item;
+                });
 
-            setExpenses(newExpenses);
+                setExpenses(newExpenses);
+                setEdit(false);
+                handleAlert({
+                    type: 'success',
+                    text: '아이템이 수정되었습니다.',
+                });
+            } else {
+                const newExpense = {
+                    id: crypto.randomUUID(),
+                    charge,
+                    amount,
+                };
+                const newExpenses = [...expenses, newExpense];
+
+                setExpenses(newExpenses);
+                handleAlert({
+                    type: 'success',
+                    text: '아이템이 생성되었습니다.',
+                });
+            }
             setCharge('');
             setAmount(0);
-            handleAlert({ type: 'success', text: '아이템이 생성되었습니다.' });
         } else {
             console.log('먼저 입력해주세요!');
             handleAlert({
@@ -76,6 +108,7 @@ const App = () => {
                     amount={amount}
                     handleAmount={handleAmount}
                     handleSubmit={handleSubmit}
+                    edit={edit}
                 />
             </div>
             <div
@@ -85,7 +118,12 @@ const App = () => {
                     padding: '1rem',
                 }}
             >
-                <ExpenseList expenses={expenses} handleDelete={handleDelete} />
+                <ExpenseList
+                    expenses={expenses}
+                    handleDelete={handleDelete}
+                    handleEdit={handleEdit}
+                    clearItems={clearItems}
+                />
             </div>
             <div
                 style={{
