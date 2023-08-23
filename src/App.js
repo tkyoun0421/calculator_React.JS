@@ -3,18 +3,47 @@ import React, { useState } from 'react';
 import ExpenseForm from './components/ExpenseForm';
 import ExpenseList from './components/ExpenseList';
 
-
 const App = () => {
     const [expenses, setExpenses] = useState([
-        {id: 1, charge: '렌트비', amount: 1600},
-        {id: 2, charge: '교통비', amount: 400},
-        {id: 3, charge: '식사', amount: 1200}
+        { id: 1, charge: '렌트비', amount: 1600 },
+        { id: 2, charge: '교통비', amount: 400 },
+        { id: 3, charge: '식사', amount: 1200 },
     ]);
 
+    const [charge, setCharge] = useState('');
+    const [amount, setAmount] = useState(0);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        if (charge !== '' && amount > 0) {
+            const newExpense = {
+                id: crypto.randomUUID(),
+                charge,
+                amount,
+            };
+            const newExpenses = [...expenses, newExpense];
+
+            setExpenses(newExpenses);
+            setCharge('');
+            setAmount(0);
+        } else {
+            console.log('먼저 입력해주세요!');
+        }
+    };
+
+    const handleCharge = (e) => {
+        setCharge(e.target.value);
+    };
+
+    const handleAmount = (e) => {
+        setAmount(e.target.valueAsNumber);
+    };
+
     const handleDelete = (id) => {
-        const newExpenses = expenses.filter(expense => expense.id !== id );
+        const newExpenses = expenses.filter((expense) => expense.id !== id);
         setExpenses(newExpenses);
-    }
+    };
 
     return (
         <main className="main-container">
@@ -26,7 +55,13 @@ const App = () => {
                     padding: '1rem',
                 }}
             >
-                <ExpenseForm />
+                <ExpenseForm
+                    charge={charge}
+                    handleCharge={handleCharge}
+                    amount={amount}
+                    handleAmount={handleAmount}
+                    handleSubmit={handleSubmit}
+                />
             </div>
             <div
                 style={{
@@ -35,7 +70,7 @@ const App = () => {
                     padding: '1rem',
                 }}
             >
-                <ExpenseList expenses={expenses} handleDelete={handleDelete}/>
+                <ExpenseList expenses={expenses} handleDelete={handleDelete} />
             </div>
             <div
                 style={{
@@ -51,6 +86,6 @@ const App = () => {
             </div>
         </main>
     );
-}
+};
 
-export default App
+export default App;
