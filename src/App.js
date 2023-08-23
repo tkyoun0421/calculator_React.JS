@@ -2,6 +2,7 @@ import './App.css';
 import React, { useState } from 'react';
 import ExpenseForm from './components/ExpenseForm';
 import ExpenseList from './components/ExpenseList';
+import Alert from './components/Alert';
 
 const App = () => {
     const [expenses, setExpenses] = useState([
@@ -12,6 +13,14 @@ const App = () => {
 
     const [charge, setCharge] = useState('');
     const [amount, setAmount] = useState(0);
+    const [alert, setAlert] = useState({ show: false, type: '', text: '' });
+
+    const handleAlert = ({ type, text }) => {
+        setAlert({ show: true, type, text });
+        setTimeout(() => {
+            setAlert({ show: false, type: '', text: '' });
+        }, 5000);
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -27,8 +36,13 @@ const App = () => {
             setExpenses(newExpenses);
             setCharge('');
             setAmount(0);
+            handleAlert({ type: 'success', text: '아이템이 생성되었습니다.' });
         } else {
             console.log('먼저 입력해주세요!');
+            handleAlert({
+                type: 'danger',
+                text: 'charge는 빈 값일 수 없으며 amount는 0보다 커야합니다.',
+            });
         }
     };
 
@@ -47,6 +61,7 @@ const App = () => {
 
     return (
         <main className="main-container">
+            {alert.show ? <Alert type={alert.type} text={alert.text} /> : null}
             <h1>예산 계산기</h1>
             <div
                 style={{
@@ -81,7 +96,12 @@ const App = () => {
             >
                 <p style={{ fontSize: '2rem' }}>
                     총지출:
-                    <span>원</span>
+                    <span>
+                        {expenses.reduce((acc, cur) => {
+                            return (acc += cur.amount);
+                        }, 0)}
+                        원
+                    </span>
                 </p>
             </div>
         </main>
